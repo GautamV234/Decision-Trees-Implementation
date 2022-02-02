@@ -538,20 +538,20 @@ class DecisionTree():
     def pred_riro(self, current_example_ind: int, tree: Real_Node, X: pd.DataFrame, prediction_arr: list):
         # print("pred began")
         if(tree.rchild is None and tree.lchild is None and tree.isLeaf == False):
-            print("AAA")
+            # print("AAA")
             return
         if(current_example_ind == len(X)):
             # print("answer for all examples is found")
-            print("BBB")
+            # print("BBB")
             return
         # print("K")
         if(tree.isLeaf):
-            print("CCC")
+            # print("CCC")
             prediction_arr.append(tree.value)
             self.pred_riro(current_example_ind+1, self.tree, X, prediction_arr)
             return
         else:
-            print("DDD")
+            # print("DDD")
             # check the attribute stored in root
             attr = tree.attribute
             # print("Yo")

@@ -1,4 +1,12 @@
-def accuracy(y_hat, y):
+
+from itertools import count
+# 
+import numpy as np
+import pandas as pd
+import math
+
+
+def accuracy(y_hat:pd.Series , y:pd.Series):
     """
     Function to calculate the accuracy
 
@@ -13,27 +21,15 @@ def accuracy(y_hat, y):
     Students are required to add appropriate assert checks at places to
     ensure that the function does not fail in corner cases.
     """
-    # assert(y_hat.size == y.size)
-    assert(len(y_hat) == len(y))
-
+    assert(y_hat.size == y.size)
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
     # TODO: Write here
-    accuracy_of_data = 0.0
-    # print(type(accuracy_of_data))
-
-    n = len(y_hat)
-    # n =
-    for i in range(n):
-        accuracy_of_data = accuracy_of_data + (y_hat[i] == y[i])
-
-    accuracy_of_data = accuracy_of_data/n
-
-    # print(accuracy_of_data)
-    return accuracy_of_data
-
-    pass
-
-# COMPLETE FROM HERE
-
+    count =0
+    for ind,elem in y_hat.iteritems():
+        if y_hat[ind]==y[ind]:
+            count+=1
+    return float((count+0.0)/len(y_hat))
 
 def precision(y_hat, y, cls):
     """
@@ -46,26 +42,15 @@ def precision(y_hat, y, cls):
     Output:
     > Returns the precision as float
     """
-
-    # assert(y_hat.size == y.size)
-    assert(len(y_hat) == len(y))
-
-    final_precision = 0.0
-
-    n = len(y_hat)
-    count_of_desired_classes = 0
-    for i in range(n):
-        count_of_desired_classes = count_of_desired_classes + (y_hat[i] == cls)
-        final_precision = final_precision + \
-            (y[i] == y_hat[i] and y_hat[i] == cls)
-
-    # print("NODC IS", count_of_desired_classes)
-    # print("FINAL PREC is ", final_precision)
-    if (final_precision == count_of_desired_classes and final_precision == 0):
-        return 0
-    final_precision = final_precision/count_of_desired_classes
-
-    return final_precision
+    assert(y_hat.size == y.size)
+    assert(y_hat.size > 0)
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
+    pred_pos = y_hat == cls
+    if sum(pred_pos) > 0:
+        return (y_hat[pred_pos] == y[pred_pos]).sum()/pred_pos.sum()
+    else:
+        return None
 
 
 def recall(y_hat, y, cls):
@@ -79,23 +64,15 @@ def recall(y_hat, y, cls):
     Output:
     > Returns the recall as float
     """
-
-    # assert(y_hat.size == y.size)
-    assert(len(y_hat) == len(y))
-
-    n = len(y_hat)
-
-    final_recall = 0.0
-    relevant_instances = 0
-
-    for i in range(n):
-        relevant_instances = relevant_instances + (y[i] == cls)
-        final_recall = final_recall + (y[i] == cls and y[i] == y_hat[i])
-
-    final_recall = final_recall/relevant_instances
-    return final_recall
-
-    pass
+    assert(y_hat.size == y.size)
+    assert(y_hat.size > 0)
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
+    act_pos = y == cls
+    if sum(act_pos) > 0:
+        return (y_hat[act_pos] == y[act_pos]).sum()/act_pos.sum()
+    else:
+        return None
 
 
 def rmse(y_hat, y):
@@ -108,29 +85,19 @@ def rmse(y_hat, y):
     Output:
     > Returns the rmse as float
     """
+    # assert y_hat.size==y.size
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
+    rmse = 0.0
+    mse = 0.0
+    for ind,elem in y_hat.iteritems():
+        v = (y_hat[ind]-y[ind]+0.0)**2
+        mse+=v
+    if(mse==0.0):
+        return 0.0
+    rmse = ((mse+0.0)/len(y_hat))**0.5
 
-    # assert(y_hat.size == y.size)
-    # print(y)
-    # print(y_hat)
-    assert(len(y_hat) == len(y))
-
-    root_mean_squared_error = 0.0
-    n = len(y_hat)
-
-    mean_squared_error = 0.0
-
-    for i in range(n):
-        to_be_added = (y[i] - y_hat[i])**2
-        mean_squared_error = mean_squared_error + to_be_added
-
-    mean_squared_error = mean_squared_error/n
-
-    root_mean_squared_error = (mean_squared_error)**0.5
-
-    return root_mean_squared_error
-
-    pass
-
+    return float(rmse)
 
 def mae(y_hat, y):
     """
@@ -143,37 +110,7 @@ def mae(y_hat, y):
     > Returns the mae as float
     """
 
-    # assert(y_hat.size == y.size)
-
-    assert(len(y_hat) == len(y))
-
-    n = len(y_hat)
-    mean_absolute_error = 0.0
-    for i in range(n):
-        mean_absolute_error = mean_absolute_error + abs(y[i] - y_hat[i])
-
-    mean_absolute_error = mean_absolute_error/n
-
-    return mean_absolute_error
-    pass
-
-# DONE
-
-
-def getPredictionMostOccuringClass(y):
-    findMax = {}
-    maxOccurence = -1
-    for i in y:
-        if i in findMax:
-            findMax[i] += 1
-        else:
-            findMax[i] = 1
-
-        maxOccurence = max(maxOccurence, findMax[i])
-
-    ans = -1
-    for i in findMax:
-        if (findMax[i] == maxOccurence):
-            ans = i
-
-    return ans
+    mae = 0.0
+    for ind,elem in y_hat.iteritems():
+       mae += abs(y_hat[ind]-y[ind])
+    return float((mae+0.0)/len(y))
