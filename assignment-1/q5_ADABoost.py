@@ -35,7 +35,7 @@ tree = DecisionTreeClassifier(criterion=criteria, max_depth=1)
 Classifier_AB = AdaBoostClassifier(n_estimators=n_estimators)
 Classifier_AB.fit(X, y)
 y_hat = Classifier_AB.predict(X)
-[fig1, fig2] = Classifier_AB.plot(X, y, "Q5")
+[fig1, fig2] = Classifier_AB.plot(figure=True,figname="Q5A")
 print('Criteria :', criteria)
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
@@ -68,7 +68,7 @@ X_test, y_test = X.iloc[splitAt+1:,
 classifier = AdaBoostClassifier(n_estimators=3)
 classifier.fit(X_train, y_train)
 y_hat = classifier.predict(X_test)
-classifier.plot(X, y, "Q5_b")           
+classifier.plot(figure = True,figname="Q5B")         
 print('Criteria :', criteria)
 print('Accuracy: ', accuracy(y_hat, y_test))
 for cls in y.unique():

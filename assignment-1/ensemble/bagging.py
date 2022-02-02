@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.utils.extmath import weighted_mode
 import os
 from sklearn.tree import DecisionTreeClassifier
+import matplotlib.colors as colors
 
 
 class BaggingClassifier():
@@ -21,6 +22,8 @@ class BaggingClassifier():
         self.criterion = 'entropy'
         self.x_datas = []
         self.y_datas = []
+        self.X = None
+        self.y = None
 
         '''
         :param base_estimator: The base estimator model instance from which the bagged ensemble is built (e.g., DecisionTree(), LinearRegression()).
@@ -35,6 +38,8 @@ class BaggingClassifier():
         X: pd.DataFrame with rows as samples and columns as features (shape of X is N X P) where N is the number of samples and P is the number of columns.
         y: pd.Series with rows corresponding to output variable (shape of Y is N)
         """
+        self.X= X
+        self.y = y
         for i in tqdm(range(self.n_estimators)):
             sampled_X = X.sample(frac = self.frac,replace=False)
             sampled_X.reset_index(drop = True,inplace=True)
@@ -64,78 +69,73 @@ class BaggingClassifier():
         df = pd.DataFrame(all_y_hats)
         return pd.Series(df.mode(axis = 'rows').iloc[0,:].tolist())
 
+    def plot(self,figure = False,figname = "Q6A"):
+        for i, model in enumerate(self.models):
+            print()
+            print()
+            print("#################")
+            print("Current Tree Num = "+str(i+1))
+            print()
+            print()
+            print(sktree.export_text(model))
 
+        if(figure==False):
+            return
+        
+        h = 0.02
+        thresh = 0.5
+        x_train = self.X.to_numpy()
+        y_train = self.y.to_numpy()
+        x_min, x_max = x_train[:,0].min()- thresh , x_train[:,0].max() + thresh
+        y_min,y_max = x_train[:,1].min()- thresh, x_train[:,1].max() + thresh
+        xx,yy = np.meshgrid(np.arange(x_min,x_max,h),np.arange(y_min,y_max,h))
+        fig1,ax =plt.subplots(figsize =(20,5))
+        for i in range(self.n_estimators):
+            ax = plt.subplot(1,self.n_estimators,i+1)
+            plt.title("Estimator -> "+str(i+1))
+            self.plot_one_estimator(ax,self.models[i].predict,xx,yy,self.X.to_numpy(),self.y.to_numpy(),i)
+        fig2,ax = plt.subplots()
+        plt.title("Final estimator")
 
-    def plot(self, X, y):
-        """
-        Function to plot the decision surface for BaggingClassifier for each estimator(iteration).
-        Creates two figures
-        Figure 1 consists of 1 row and `n_estimators` columns and should look similar to slide #16 of lecture
-        The title of each of the estimator should be iteration number
-
-        Figure 2 should also create a decision surface by combining the individual estimators and should look similar to slide #16 of lecture
-
-        Reference for decision surface: https://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html
-
-        This function should return [fig1, fig2]
-
-        """
-        color = ["r", "b", "g"]
-        Zs = []
-        fig1, ax1 = plt.subplots(
-            1, len(self.models), figsize=(5*len(self.models), 4))
-
-        x_min, x_max = X[0].min(), X[0].max()
-        y_min, y_max = X[1].min(), X[1].max()
-        x_range = x_max-x_min
-        y_range = y_max-y_min
-
-        for i, tree in enumerate(self.models):
-            X_tree = self.x_datas[i]
-            y_tree = self.y_datas[i]
-            # X_tree, y_tree = self.datas[i]
-
-            xx, yy = np.meshgrid(np.arange(x_min-0.2, x_max+0.2, (x_range)/50),
-                                np.arange(y_min-0.2, y_max+0.2, (y_range)/50))
-
-            ax1[i].set_ylabel("X2")
-            ax1[i].set_xlabel("X1")
-            Z = tree.predict(np.c_[xx.ravel(), yy.ravel()])
-            Z = Z.reshape(xx.shape)
-            Zs.append(Z)
-            cs = ax1[i].contourf(xx, yy, Z, cmap=plt.cm.RdYlBu)
-            fig1.colorbar(cs, ax=ax1[i], shrink=0.9)
-
-            for y_label in y.unique():
-                idx = y_tree == y_label
-                id = list(y_tree.cat.categories).index(y_tree[idx].iloc[0])
-                ax1[i].scatter(X_tree.loc[idx, 0], X_tree.loc[idx, 1], c=color[id],
-                            cmap=plt.cm.RdYlBu, edgecolor='black', s=30,
-                            label="Class: "+str(y_label))
-            ax1[i].set_title("Decision Surface Tree: " + str(i+1))
-            ax1[i].legend()
-        fig1.tight_layout()
-        # For Common surface
-        fig2, ax2 = plt.subplots(1, 1, figsize=(5, 4))
-        Zs = np.array(Zs)
-        com_surface, _ = weighted_mode(Zs, np.ones(Zs.shape))
-        cs = ax2.contourf(xx, yy, Z, cmap=plt.cm.RdYlBu)
-        for y_label in y.unique():
-            idx = y == y_label
-            id = list(y.cat.categories).index(y[idx].iloc[0])
-            ax2.scatter(X.loc[idx, 0], X.loc[idx, 1], c=color[id],
-                        cmap=plt.cm.RdYlBu, edgecolor='black', s=30,
-                        label="Class: "+str(y_label))
-        ax2.set_ylabel("X2")
-        ax2.set_xlabel("X1")
-        ax2.legend()
-        ax2.set_title("Common Decision Surface")
-        fig2.colorbar(cs, ax=ax2, shrink=0.9)
-
-        # Saving Figures
-        image_path = ''
-        fig1.savefig(os.path.join("plots", "Q6_Fig1.png"))
-        fig2.savefig(os.path.join("plots", "Q6_Fig2.png"))
-        return fig1, fig2
-
+        self.plot_one_estimator(ax,self.predict,xx,yy,x_train,y_train,-1) 
+        fig1.savefig(os.path.join("plots", str(figname)+"_Fig1.png"))
+        fig2.savefig(os.path.join("plots", str(figname)+"_Fig2.png"))
+        return fig1,fig2
     
+    def plot_one_estimator(self,ax,predictor,xx,yy,X,y,i):
+        if(i==-1):
+            X=self.X.to_numpy()
+            y =self.y.to_numpy()
+            frame = np.c_[xx.ravel(),yy.ravel()]
+            df = pd.DataFrame(frame,columns=list(self.X.columns))
+            Z = predictor(df)
+            if(type(Z)!=np.ndarray):
+                Z = Z.to_numpy()
+            Z = Z.reshape(xx.shape)
+            ax.contourf(xx,yy,Z,cmap = plt.cm.RdBu,alpha = 0.7)
+            X_ = self.X.to_numpy()
+            ax.scatter(X_[:,0],X_[:,1],c= y,cmap=colors.ListedColormap(["#FF0000","#0000FF"]),edgecolors="k")
+            ax.set_xlabel("Feature 0")
+            ax.set_ylabel("Feature 1")
+            ax.set_xlim(xx.min(),xx.max())
+            ax.set_ylim(yy.min(),yy.max())
+            ax.set_xticks(())
+            ax.set_yticks(())
+        else:     
+            frame = np.c_[xx.ravel(),yy.ravel()]
+            df = pd.DataFrame(frame,columns=list(self.X.columns))
+            Z = predictor(df)
+            if(type(Z)!=np.ndarray):
+                Z = Z.to_numpy()
+            Z = Z.reshape(xx.shape)
+            ax.contourf(xx,yy,Z,cmap = plt.cm.RdBu,alpha = 0.7)
+            X_ = self.X.to_numpy()
+            ax.scatter(X_[:,0],X_[:,1],c= y,cmap=colors.ListedColormap(["#FF0000","#0000FF"]),edgecolors="k")
+            ax.set_xlabel("Feature 0")
+            ax.set_ylabel("Feature 1")
+            ax.set_xlim(xx.min(),xx.max())
+            ax.set_ylim(yy.min(),yy.max())
+            ax.set_xticks(())
+            ax.set_yticks(())
+
+

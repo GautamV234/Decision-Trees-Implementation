@@ -29,7 +29,7 @@ tree = DecisionTree(criterion=criteria)
 Classifier_B = BaggingClassifier(n_estimators=n_estimators )
 Classifier_B.fit(X, y)
 y_hat = Classifier_B.predict(X)
-[fig1, fig2] = Classifier_B.plot(X,y)
+[fig1, fig2] = Classifier_B.plot(figure=True,figname="Q6A")
 print('Criteria :', criteria)
 print('Accuracy: ', accuracy(y_hat, y))
 for cls in y.unique():
