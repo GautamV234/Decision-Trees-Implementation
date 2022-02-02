@@ -1,5 +1,12 @@
 
-def accuracy(y_hat, y):
+from itertools import count
+# 
+import numpy as np
+import pandas as pd
+import math
+
+
+def accuracy(y_hat:pd.Series , y:pd.Series):
     """
     Function to calculate the accuracy
 
@@ -15,8 +22,15 @@ def accuracy(y_hat, y):
     ensure that the function does not fail in corner cases.
     """
     assert(y_hat.size == y.size)
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
     # TODO: Write here
-    pass
+    acc =0.0
+    count =0
+    for ind,elem in y_hat.iteritems():
+        if y_hat[ind]==y[ind]:
+            count+=1
+    return float((count+0.0)/len(y_hat))
 
 def precision(y_hat, y, cls):
     """
@@ -29,7 +43,16 @@ def precision(y_hat, y, cls):
     Output:
     > Returns the precision as float
     """
-    pass
+    assert(y_hat.size == y.size)
+    assert(y_hat.size > 0)
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
+    pred_pos = y_hat == cls
+    if sum(pred_pos) > 0:
+        return (y_hat[pred_pos] == y[pred_pos]).sum()/pred_pos.sum()
+    else:
+        return None
+
 
 def recall(y_hat, y, cls):
     """
@@ -42,7 +65,16 @@ def recall(y_hat, y, cls):
     Output:
     > Returns the recall as float
     """
-    pass
+    assert(y_hat.size == y.size)
+    assert(y_hat.size > 0)
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
+    act_pos = y == cls
+    if sum(act_pos) > 0:
+        return (y_hat[act_pos] == y[act_pos]).sum()/act_pos.sum()
+    else:
+        return None
+
 
 def rmse(y_hat, y):
     """
@@ -54,8 +86,16 @@ def rmse(y_hat, y):
     Output:
     > Returns the rmse as float
     """
-
-    pass
+    assert y_hat.size==y.size
+    y_hat.reset_index(drop=True,inplace=True)
+    y.reset_index(drop=True,inplace=True)
+    rmse = 0.0
+    mse = 0.0
+    for ind,elem in y_hat.iteritems():
+        v = (y_hat[ind]-y[ind]+0.0)**2
+        mse+=v
+    rmse = ((mse+0.0)/len(y_hat))**0.5
+    return float(rmse)
 
 def mae(y_hat, y):
     """
@@ -67,4 +107,8 @@ def mae(y_hat, y):
     Output:
     > Returns the mae as float
     """
-    pass
+    assert y_hat.size==y.size
+    mae = 0.0
+    for ind,elem in y_hat.iteritems():
+       mae += abs(y_hat[ind]-y[ind])
+    return float((mae+0.0)/len(y))

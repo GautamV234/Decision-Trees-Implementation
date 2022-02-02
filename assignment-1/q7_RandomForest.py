@@ -12,28 +12,30 @@ from metrics import *
 
 from tree.randomForest import RandomForestClassifier
 from tree.randomForest import RandomForestRegressor
+from tree.base import DecisionTree
 
 np.random.seed(42)
 
 ########### RandomForestClassifier ###################
 
 N = 30
-P = 5
+P = 2
 X = pd.DataFrame(np.random.randn(N, P))
 y = pd.Series(np.random.randint(P, size = N), dtype="category")
 
+
 for criteria in ['information_gain', 'gini_index']:
-    Classifier_RF = RandomForestClassifier(10, criterion = criteria)
+    Classifier_RF = RandomForestClassifier(n_estimators= 5 ,criterion = criteria)
     Classifier_RF.fit(X, y)
     y_hat = Classifier_RF.predict(X)
-    Classifier_RF.plot()
+    fig1,fig2 = Classifier_RF.plot(figure=True,figname="Q7")
     print('Criteria :', criteria)
     print('Accuracy: ', accuracy(y_hat, y))
     for cls in y.unique():
         print('Precision: ', precision(y_hat, y, cls))
         print('Recall: ', recall(y_hat, y, cls))
 
-########### RandomForestRegressor ###################
+######### RandomForestRegressor ###################
 
 N = 30
 P = 5
