@@ -12,3 +12,11 @@ REAL INPUT REAL OUTPUT GRAPHS
 ![WhatsApp Image 2022-02-02 at 4 41 55 PM](https://user-images.githubusercontent.com/68188848/152143591-0a14adaa-2591-4cd2-a106-591c7eac25a2.jpeg)
 ![WhatsApp Image 2022-02-02 at 4 43 49 PM](https://user-images.githubusercontent.com/68188848/152143596-bb8a65b7-29f3-4a31-a302-73be9bcc0123.jpeg)
 ![WhatsApp Image 2022-02-02 at 4 43 49 PM (1)](https://user-images.githubusercontent.com/68188848/152143600-2dcf60cc-0b5a-41bd-baa4-551b939de55d.jpeg)
+
+
+REAL INPUT DISCRETE OUTPUT GRAPHS
+
+![WhatsApp Image 2022-02-02 at 4 52 09 PM](https://user-images.githubusercontent.com/68188848/152144657-11a2b74e-b578-4b76-b8ca-3859b6f582f3.jpeg)
+![WhatsApp Image 2022-02-02 at 4 52 08 PM (1)](https://user-images.githubusercontent.com/68188848/152144659-2fe4b096-882d-4087-a67a-a1015e6cbfeb.jpeg)
+![WhatsApp Image 2022-02-02 at 4 52 08 PM](https://user-images.githubusercontent.com/68188848/152144661-d22b7cb7-71ac-4fa1-b442-2d8f416319f8.jpeg)
+![WhatsApp Image 2022-02-02 at 4 48 20 PM (1)](https://user-images.githubusercontent.com/68188848/152144665-be3b941b-226e-4278-864b-7991af28df76.jpeg)
