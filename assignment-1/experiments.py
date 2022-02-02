@@ -32,9 +32,7 @@ def checkTimeForDiscreteInputDiscreteOutput():
         X = pd.DataFrame({i: pd.Series(np.random.randn(
             2, size=N), dtype="category") for i in range(M)})
         y = pd.Series(np.random.randn(M, size=N), dtype="category")
-
         begin = time.time()
-
         tree = DecisionTree(criterion="information_gain")
         tree.fit(X, y)
 

@@ -1,3 +1,5 @@
+THE FOLLOWING ARE ALL THE GRAPHS ASKED-
+
 DISCRETE INPUT DISCRETE OUTPUT GRAPHS
 
 ![Q4_di_di_datapointsVStime_timeForBuilding](https://user-images.githubusercontent.com/68188848/152141942-d0412ab1-4a56-4572-a958-6ae4c1f04591.png)
