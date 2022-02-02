@@ -27,7 +27,8 @@ for criteria in ['information_gain', 'gini_index']:
     tree = DecisionTree(criterion=criteria) #Split based on Inf. Gain
     tree.fit(X, y)
     y_hat = tree.predict(X)
-    tree.plot()
+    print(y_hat)
+    # tree.plot()
     print('Criteria :', criteria)
     print('RMSE: ', rmse(y_hat, y))
     print('MAE: ', mae(y_hat, y))
